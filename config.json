@@ -1,0 +1,16 @@
+{
+  "retention_days": 30,
+  "arxiv": {
+    "categories": ["cs.AI", "cs.LG", "cs.CL", "cs.CV", "stat.ML"],
+    "max_results": 100
+  },
+  "huggingface": {
+    "days_back": 3
+  },
+  "github": {
+    "topics": ["llm", "machine-learning", "deep-learning", "ai-agents", "generative-ai"],
+    "created_within_days": 14,
+    "min_stars": 50,
+    "per_topic": 20
+  }
+}
