@@ -52,6 +52,7 @@
     <button class="chip" data-src="arxiv" aria-pressed="true">arXiv</button>
     <button class="chip" data-src="huggingface" aria-pressed="true">Hugging Face</button>
     <button class="chip" data-src="github" aria-pressed="true">GitHub</button>
+    <select id="topic" aria-label="Topic"><option value="">All topics</option></select>
     <select id="sort" aria-label="Sort">
       <option value="new">Newest</option>
       <option value="score">Top score</option>
@@ -62,8 +63,10 @@
 </main>
 
 <script>
-const state = { items: [], sources: new Set(["arxiv", "huggingface", "github"]), q: "", sort: "new" };
+const state = { items: [], sources: new Set(["arxiv", "huggingface", "github"]), q: "", sort: "new", topic: "" };
 const SCORE_LABEL = { huggingface: "upvotes", github: "stars", arxiv: "" };
+const TOPIC_LABEL = { ai: "AI / ML", math: "Math & algorithms" };  // unknown names show as-is
+const topicsOf = (i) => i.topics || ["ai"];
 const $ = (s) => document.querySelector(s);
 
 function esc(s) { const d = document.createElement("div"); d.textContent = s ?? ""; return d.innerHTML; }
@@ -79,6 +82,7 @@ function render() {
   const q = state.q.toLowerCase();
   let rows = state.items.filter((i) =>
     (i.sources || [i.source]).some((s) => state.sources.has(s)) &&
+    (!state.topic || topicsOf(i).includes(state.topic)) &&
     (!q || (i.title + " " + (i.summary || "")).toLowerCase().includes(q)));
   rows.sort((a, b) => state.sort === "score"
     ? (b.score || 0) - (a.score || 0)
@@ -90,7 +94,7 @@ function render() {
     const who = (i.authors || []).slice(0, 3).join(", ");
     return `<article class="item">
       <h2><a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a></h2>
-      <div class="meta">${tags}${label}<span>${esc(who)}</span><span>${ago(i.first_seen)}</span></div>
+      <div class="meta">${tags}${i.category ? `<span>${esc(i.category)}</span>` : ""}${label}<span>${esc(who)}</span><span>${ago(i.first_seen)}</span></div>
       <p class="summary">${esc(i.summary)}</p></article>`;
   }).join("") : `<div class="empty">Nothing matches.</div>`;
 }
@@ -103,11 +107,15 @@ document.querySelectorAll(".chip").forEach((b) => b.addEventListener("click", ()
 }));
 $("#q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
 $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
+$("#topic").addEventListener("change", (e) => { state.topic = e.target.value; render(); });
 
 fetch("data/items.json", { cache: "no-cache" })
   .then((r) => r.json())
   .then((d) => {
     state.items = d.items;
+    const topics = [...new Set(d.items.flatMap(topicsOf))].sort();
+    $("#topic").insertAdjacentHTML("beforeend",
+      topics.map((t) => `<option value="${esc(t)}">${esc(TOPIC_LABEL[t] || t)}</option>`).join(""));
     $("#status").textContent = `${d.items.length} items · updated ${ago(d.updated)}`;
     render();
   })

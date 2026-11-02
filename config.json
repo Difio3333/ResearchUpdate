@@ -1,8 +1,26 @@
 {
-  "retention_days": 30,
+  "retention_days": 21,
+  "max_items": 3000,
   "arxiv": {
-    "categories": ["cs.AI", "cs.LG", "cs.CL", "cs.CV", "stat.ML"],
-    "max_results": 100
+    "feeds": [
+      {
+        "name": "ai",
+        "categories": ["cs.AI", "cs.LG", "cs.CL", "cs.CV", "stat.ML"],
+        "max_results": 200
+      },
+      {
+        "name": "math",
+        "categories": ["math.NA", "math.OC", "cs.DS", "cs.MS", "cs.SC", "cs.CG", "cs.IT", "stat.CO", "cs.DM"],
+        "max_results": 300,
+        "keywords": [
+          "algorithm", "solver", "efficient", "faster", "speedup", "accelerat",
+          "numerical", "implementation", "computational", "approximation", "scalable",
+          "linear time", "near-linear", "polynomial time", "running time", "sparse", "matrix",
+          "gpu", "parallel", "distributed", "preconditioner", "convergence rate",
+          "heuristic", "data structure", "compression", "software", "library", "open-source"
+        ]
+      }
+    ]
   },
   "huggingface": {
     "days_back": 3
