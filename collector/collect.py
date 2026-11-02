@@ -20,7 +20,7 @@ OUT = ROOT / "docs" / "data" / "items.json"
 CONFIG = json.loads((ROOT / "config.json").read_text())
 RETENTION_DAYS = CONFIG.get("retention_days", 21)
 MAX_ITEMS = CONFIG.get("max_items", 3000)
-SUMMARY_CHARS = 600
+SUMMARY_CHARS = 1500  # long enough for nearly every arXiv abstract
 UA = "ai-research-radar/0.2 (+https://github.com)"
 NOW = datetime.now(timezone.utc)
 
